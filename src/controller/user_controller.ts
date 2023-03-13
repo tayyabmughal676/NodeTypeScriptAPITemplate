@@ -8,18 +8,13 @@ const userRouter: Router = Router();
 
 userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = new User({
-            name: 'Bill',
-            email: 'bill@initech.com',
-            avatar: 'https://i.imgur.com/dM7Thhn.png'
-        });
-        await user.save();
-        console.log(user.email);
-        log.info(`${user.email}`);
-
+        
+       const user = await User.find();
+        console.log(user);
+        log.info(`${user}`);
         res.json({ "user": user });
     } catch (error) {
-        log.info(`onUserCreationError: ${error}`);
+        log.info(`onGetUsersError: ${error}`);
     }
 
 });
