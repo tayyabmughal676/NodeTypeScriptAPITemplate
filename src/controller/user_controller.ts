@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction, Router } from 'express';
 import User from '../model/User';
 import log from '../logger';
+import HttpStatusCodes from "http-status-codes";
+
 
 const userRouter: Router = Router();
 
-const userController = userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
+userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = new User({
             name: 'Bill',
@@ -14,12 +16,48 @@ const userController = userRouter.get('/', async (req: Request, res: Response, n
         await user.save();
         console.log(user.email);
         log.info(`${user.email}`);
-    
-        res.json({"user": user});
+
+        res.json({ "user": user });
     } catch (error) {
         log.info(`onUserCreationError: ${error}`);
     }
 
 });
 
-export default userController;
+userRouter.post("/", async (req: Request, res: Response, next: NextFunction) => {
+
+    const { email, password } = req.body;
+
+    try {
+
+        let userCheck = await User.findOne({ email });
+
+        if (userCheck) {
+            return res.status(HttpStatusCodes.BAD_REQUEST).json({
+                errors: [
+                    {
+                        msg: "User already exists",
+                    },
+                ],
+            });
+        }
+        const user = new User({
+            email: email,
+            password: password,
+            avatar: 'https://i.imgur.com/dM7Thhn.png'
+        });
+        await user.save();
+        console.log(user.email);
+        log.info(`${user.email}`);
+
+        res.json({ "user": user });
+
+
+    } catch (error) {
+        log.info(`onUserCreationError: ${error}`);
+    }
+});
+
+
+
+export default userRouter;

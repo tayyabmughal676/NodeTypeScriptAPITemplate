@@ -4,7 +4,7 @@ import config from "config";
 import log from './logger';
 import connect from './db/connect';
 import routes from './routes';
-import userController from './controller/user_controller';
+import userRouter from './controller/user_controller';
 
 // Port + Host
 const port = config.get("port") as number;
@@ -15,28 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
-// User Controller
-app.use(userController);
-
-
-
-// app.get('/', async (req: Request, res: Response, next: NextFunction) => {
-//     res.send("Hello, TypeScript!")
-
-//     const user = new User({
-//         name: 'Bill',
-//         email: 'bill@initech.com',
-//         avatar: 'https://i.imgur.com/dM7Thhn.png'
-//     });
-
-//     await user.save();
-//     console.log(user.email);
-//     log.info(`${user.email}`);
-
-// });
-
-
-
+// User Route
+app.use("/api/user",userRouter);
 
 /// Listen Port + Host
 app.listen(port, host, () => {
